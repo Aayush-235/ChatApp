@@ -33,11 +33,10 @@ const LoginPage = () => {
           {currState}
           {isDataSubmitted && <img onClick={() => setIsDataSubmitted(false)} src={assets.arrow_icon} className='w-5 cursor-pointer' alt="" />}
 
-
         </h2>
         {currState === "Sign up" && !isDataSubmitted && (
           <input onChange={(e) => setFullName(e.target.value)} value={fullName} type="text" placeholder='Full Name' required
-            className='p-2 border border-gray-500 rounded-md focus:outline-none' minLength={5}/>
+            className='p-2 border border-gray-500 rounded-md focus:outline-none' minLength={6}/>
         )}
 
         {!isDataSubmitted && (

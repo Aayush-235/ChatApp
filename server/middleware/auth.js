@@ -4,7 +4,7 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
 
-const fetchUser = async (req, res, next) => {
+export const fetchUser = async (req, res, next) => {
     try {
 
         // const token = req.header("auth-token")

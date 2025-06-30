@@ -5,6 +5,7 @@ import "dotenv/config"
 import cors from 'cors'
 import http from 'http'
 import { connectDB } from './lib/db.js'
+import useRouter from './routes/userRoutes.js'
 
 // create express app and HTTP server
 
@@ -20,9 +21,9 @@ app.use("/api/status", (req, res)=>{
     res.send('Server is live!!!')
 })
 
-app.get("/", (req, res)=>{
-    res.send('Hello World!')
-})
+// Router setup
+app.use("/api/auth", useRouter)
+
 
 //Connect to MongoDB
 
