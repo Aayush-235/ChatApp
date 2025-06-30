@@ -8,7 +8,7 @@ import bcrypt from 'bcryptjs'
 export const signup = async (req, res) => {
     const { fullName, email, password, bio } = req.body
 
-    try {
+    try { 
         if (!fullName || !email || !password || !bio) {
             return res.status(400).json({
                 success: false,
@@ -26,7 +26,7 @@ export const signup = async (req, res) => {
         }
 
         const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password,salt)
+        const hashedPassword = await bcrypt.hash(password, salt)
 
         const newUser = User.create({
             fullName,
@@ -38,20 +38,69 @@ export const signup = async (req, res) => {
         const token = generateToken(newUser._id)
 
         res.json({
-            success:true,
-            userData:newUser,
-            message:"User created successfully",
+            success: true,
+            userData: newUser,
+            message: "User created successfully",
             token
-        })  
+        })
 
     } catch (error) {
         console.log(error.message)
         res.status(500).json({
-            success:false,
-            message:"Internal server error"
+            success: false,
+            message: "Internal server error"
         })
     }
 
 }
 
 
+
+//Controller to login a user
+
+export const login = async (req, res) => {
+
+    const { email, password } = req.body
+
+    try {
+        const userData = await User.findOne({ email })
+
+        const isPasswordCorrect = await bcrypt.compare(password, userData.password)
+
+        if (!isPasswordCorrect) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid email or password"
+            })
+        }
+
+        const token = generateToken(userData._id)
+
+        res.json({
+            success: true,
+            userData: userData,
+            message: "Login successfully",
+            token
+        })
+
+
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+
+}
+
+
+
+// Controller to check if user is authenticated..
+
+export const checkAuth = async (req, res) =>{
+    res.json({
+        success:true,
+        user:req.user
+    })
+}
