@@ -2,7 +2,7 @@
 // short ma >> get the user details from jwt token
 
 import jwt from 'jsonwebtoken'
-import User from '../models/User'
+import User from '../models/User.js'
 
 export const fetchUser = async (req, res, next) => {
     try {

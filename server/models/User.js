@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userScheme = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     email : {
         type:String,
         required:true,
@@ -28,6 +28,6 @@ const userScheme = new mongoose.Schema({
 // timestamps automatically adds two fields in our MongoDB documents: createdAt - when our document first created,  updatedAt - document was last updated
 
 
-const User = mongoose.model("User", userScheme);  // Crete model
+const User = mongoose.model("User", userSchema);  // Crete model
 
 export default User
