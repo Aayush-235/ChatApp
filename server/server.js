@@ -20,6 +20,10 @@ app.use("/api/status", (req, res)=>{
     res.send('Server is live!!!')
 })
 
+app.get("/", (req, res)=>{
+    res.send('Hello World!')
+})
+
 //Connect to MongoDB
 
 await connectDB() 
