@@ -114,14 +114,14 @@ export const markMessageAsSeen = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
     try {
-        
-        const {text, image} = req.body;
+
+        const { text, image } = req.body;
         const receiverId = req.params.id;
         const senderId = req.user._id;
 
         let imageURL;
 
-        if(image){
+        if (image) {
             const upload = await cloudinary.uploader.upload(image)
             imageURL = upload.secure_url;
         }
@@ -132,7 +132,14 @@ export const sendMessage = async (req, res) => {
             text,
             image: imageURL
         })
-        
+
+        //Emit the new msg to the rcvr socket
+
+        const receiverSocketId = userSocketMap[receiverId];
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('newMessage', newMessage)
+        } // use of give benefit >> rcvr can see msg instanly
+
         return res.json({
             success: true,
             newMessage
