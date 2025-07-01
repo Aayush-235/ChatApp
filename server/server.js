@@ -6,6 +6,7 @@ import cors from 'cors'
 import http from 'http'
 import { connectDB } from './lib/db.js'
 import useRouter from './routes/userRoutes.js'
+import messageRouter from './routes/messageRoutes.js'
 
 // create express app and HTTP server
 
@@ -23,6 +24,7 @@ app.use("/api/status", (req, res)=>{
 
 // Router setup
 app.use("/api/auth", useRouter)
+app.use("/api/messages", messageRouter)
 
 
 //Connect to MongoDB

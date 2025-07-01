@@ -106,3 +106,6 @@ export const markMessageAsSeen = async (req, res) => {
         })
     }
 }
+
+
+
