@@ -28,17 +28,17 @@ export const getUsersForSidebar = async () => {
         await Promise.all(promise) // still not run the code, when all the user unseenmessage counting completee
 
         return res.json({
-            success : true,
-            users : filterUsers,
-            unseenMessage : unseenMessage
+            success: true,
+            users: filterUsers,
+            unseenMessage: unseenMessage
         })
 
     } catch (error) {
         console.log(error.message)
 
         res.json({
-            success : true,
-            message : error.message
+            success: true,
+            message: error.message
         })
     }
 
@@ -48,10 +48,10 @@ export const getUsersForSidebar = async () => {
 
 // Get all message for selected user
 
-export const getAllMessage = async (req, res) =>{
+export const getAllMessage = async (req, res) => {
     try {
-        
-        const {id : selectedUserId} = req.params; // sender id
+
+        const { id: selectedUserId } = req.params; // sender id
         const myId = req.user._id // logged userid
 
         const messages = await Message.find({
@@ -62,24 +62,47 @@ export const getAllMessage = async (req, res) =>{
         })  // fetch all msg btw sdr and rcr
 
         await messages.updateMany({
-            senderId : selectedUserId,
-            receiverId : myId
-        },{
-            seen : true
+            senderId: selectedUserId,
+            receiverId: myId
+        }, {
+            seen: true
         })
 
 
         return res.json({
-            success : true,
-            messages : messages
+            success: true,
+            messages: messages
         })
 
 
     } catch (error) {
         console.log(error.message)
         res.json({
-            success : true,
-            message : error.message
+            success: true,
+            message: error.message
+        })
+    }
+}
+
+// API to mark message as seen using "message id"
+
+export const markMessageAsSeen = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+        await Message.findByIdAndUpdate(id, { seen: true })
+
+        return res.json({
+            success: true,
+            message: "Message marked as seen"
+        })
+
+
+    } catch (error) {
+        console.log(error.message)
+        res.json({
+            success: true,
+            message: error.message
         })
     }
 }
