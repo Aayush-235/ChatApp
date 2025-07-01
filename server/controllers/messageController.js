@@ -42,5 +42,44 @@ export const getUsersForSidebar = async () => {
         })
     }
 
-    
+
+}
+
+
+// Get all message for selected user
+
+export const getAllMessage = async (req, res) =>{
+    try {
+        
+        const {id : selectedUserId} = req.params; // sender id
+        const myId = req.user._id // logged userid
+
+        const messages = await Message.find({
+            $or: [
+                { senderId: selectedId, receiverId: myId },
+                { senderId: myId, receiverId: selectedId }
+            ]
+        })  // fetch all msg btw sdr and rcr
+
+        await messages.updateMany({
+            senderId : selectedUserId,
+            receiverId : myId
+        },{
+            seen : true
+        })
+
+
+        return res.json({
+            success : true,
+            messages : messages
+        })
+
+
+    } catch (error) {
+        console.log(error.message)
+        res.json({
+            success : true,
+            message : error.message
+        })
+    }
 }
