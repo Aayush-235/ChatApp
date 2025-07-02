@@ -1,9 +1,15 @@
 import React from 'react'
 import assets, { userDummyData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 const Sidebar = ({ selectedUser, setselectedUser }) => {
+
   const navigate = useNavigate();
+
+  const { logout } = useContext(AuthContext)
+
   return (
     <div className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""
       }`} >
@@ -23,7 +29,7 @@ const Sidebar = ({ selectedUser, setselectedUser }) => {
 
               <hr className='my-2 border-t border-gray-500' />
 
-              <p className='cursor-pointer text-sm'>Logout</p>
+              <p onClick={()=> logout()}className='cursor-pointer text-sm'>Logout</p>
             </div>
 
           </div>
@@ -43,14 +49,14 @@ const Sidebar = ({ selectedUser, setselectedUser }) => {
         {
           userDummyData.map((user, index) => (
 
-            <div onClick={()=>{
+            <div onClick={() => {
               setselectedUser(user)
-            }} 
-            key={index} className={`relative flex items-center gap-2 p-2 pl-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && 'bg-[#282142]/50'}`}>
+            }}
+              key={index} className={`relative flex items-center gap-2 p-2 pl-2 rounded cursor-pointer max-sm:text-sm ${selectedUser?._id === user._id && 'bg-[#282142]/50'}`}>
 
-              <img src={user?.profilePic || assets.avatar_icon} 
-              alt={`${user.fullName}'s profile picture`} 
-              className='w-[35px] aspect-[1/1] rounded-full cursor-pointer' />
+              <img src={user?.profilePic || assets.avatar_icon}
+                alt={`${user.fullName}'s profile picture`}
+                className='w-[35px] aspect-[1/1] rounded-full cursor-pointer' />
 
               <div className='flex flex-col leading-5'>
                 <p>{user.fullName}</p>
