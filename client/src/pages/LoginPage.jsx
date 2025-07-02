@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import assets from '../assets/assets'
+import { useContext } from 'react'
+import { AuthContext } from '../../context/AuthContext'
 
 const LoginPage = () => {
   const [currState, setCurrState] = useState("Sign up")
@@ -9,6 +11,7 @@ const LoginPage = () => {
   const [bio, setBio] = useState("")
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
 
+  const { login } = useContext(AuthContext)
 
   const onSubmitHandler = (event) => {
     event.preventDefault();
@@ -16,6 +19,13 @@ const LoginPage = () => {
       setIsDataSubmitted(true)
       return;
     }
+
+    login(currState === "Sign up" ? "signup" : "login" , {
+      fullName,
+      email,
+      password,
+      bio
+    })
   }
 
   return (
@@ -36,7 +46,7 @@ const LoginPage = () => {
         </h2>
         {currState === "Sign up" && !isDataSubmitted && (
           <input onChange={(e) => setFullName(e.target.value)} value={fullName} type="text" placeholder='Full Name' required
-            className='p-2 border border-gray-500 rounded-md focus:outline-none' minLength={6}/>
+            className='p-2 border border-gray-500 rounded-md focus:outline-none' minLength={6} />
         )}
 
         {!isDataSubmitted && (
@@ -45,7 +55,7 @@ const LoginPage = () => {
               className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" />
 
             <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" placeholder="Password" required
-              className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" minLength={6}/>
+              className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" minLength={6} />
           </>
         )}
 
