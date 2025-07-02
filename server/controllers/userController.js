@@ -120,6 +120,7 @@ export const updateProfile = async (req, res) =>{
             updateProfile = await User.findByIdAndUpdate(userId, {bio, fullName}, {new:"true"})
         }
         else{
+            // here in profiel pic we get the base64 string of image from client side
             const uploadPhoto = await cloudinary.uploader.upload(profilePic)
 
             updateProfile = await User.findByIdAndUpdate(userId, {bio, fullName, profilePic : uploadPhoto.secure_url}, {new:"true"})
