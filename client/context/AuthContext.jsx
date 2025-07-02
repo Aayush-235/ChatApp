@@ -19,25 +19,63 @@ export const AuthProvider = ({ children }) => {
 
     // Check is user is authenticated and if so, set the user data and connect to the socket server
 
-    const checkAuth = async()=>{
+    const checkAuth = async () => {
         try {
-           const {data} = await axios.get("/api/auth/check")
-           if(data.success){
+            const { data } = await axios.get("/api/auth/check")
+            if (data.success) {
                 setAuthUser(data.user);
                 connectSocket(data.user);
-           }
+            }
         } catch (error) {
             toast.error(error.message);
+        }
+    }
+
+    // login function to authenticate user and socket connection
+
+    const login = async (state, credentials) => {
+        try {
+            const { data } = await axios.post(`/api/auth/${state}`, credentials)
+
+            if (data.success) {
+                setAuthUser(data.userData);
+                connectSocket(data.userData)
+                axios.defaults.headers.common['auth-token'] = data.token
+                setToken(data.token);
+                localStorage.setItem("token", data.token);
+                toast.success(data.message)
+            }
+            else{
+                toast.error(data.message)
+            }
+
+        } catch (error) {
+            toast.error(error.message);
+        }
+    }
+
+
+    // logout function to clear user data and disconnect socket
+    const logout = async () =>{
+        localStorage.removeItem("token")
+        setToken(null);
+        setAuthUser(null)
+        setOnlineUsers([]);
+        axios.defaults.headers.common['auth-token'] = null
+        toast.success("Logout successfully");
+        if (socket) {
+            socket.disconnect();
+            setSocket(null);
         }
     }
 
     // Connect socket function to handle server connection and online users update
 
     const connectSocket = (userData) => {
-        if(!userData || socket?.connected) return;
+        if (!userData || socket?.connected) return;
 
         const newSocketConnection = io(backendUrl, {
-            query:{
+            query: {
                 userId: userData._id,
             }
         })
@@ -50,15 +88,15 @@ export const AuthProvider = ({ children }) => {
         })
     }
 
-    useEffect(()=>{
-        if(token){
-            axios.defaults.headers.common['auth-token'] = token; 
+    useEffect(() => {
+        if (token) {
+            axios.defaults.headers.common['auth-token'] = token;
             // Set authtoken in all future axios htpp requests >> joint a default header name of 'auth-token' and value is token
             checkAuth();
         }
-    },[])
+    }, [])
 
-    const value = {  
+    const value = {
         axios,
         authUser,
         socket,
