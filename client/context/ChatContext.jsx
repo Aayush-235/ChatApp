@@ -55,10 +55,10 @@ export const ChatProvider = ({ children }) => {
         try {
             const { data } = await axios.post(`/api/message/send/${selectedUser._id}`, messageData);
 
-            if(data.success){
-                setMessage((preMessages)=>[...preMessages, data.newMessage])
+            if (data.success) {
+                setMessage((preMessages) => [...preMessages, data.newMessage])
             }
-            else{
+            else {
                 toast.error(data.message);
             }
         } catch (error) {
@@ -66,6 +66,26 @@ export const ChatProvider = ({ children }) => {
         }
     }
 
+
+    // Function to subscribe to new message for selectd uer
+
+    const subscribeToNewMessage = () => {
+        if (!socket) return;
+
+        socket.on("newMessage", (newMessage) => {
+            if (selectedUser && newMessage.senderId === selectedUser._id) {
+                newMessage.seen = true;
+                setMessage((preMessages) => [...preMessages, newMessage])
+                axios.put(`/api/message/mark/${newMessage._id}`)
+            }
+            else {
+                setUnseenMessages((prevUnseenMessage) => ({
+                    ...prevUnseenMessage,
+                    [newMessage.senderId]: prevUnseenMessage[newMessage.senderId] ? prevUnseenMessage[newMessage.senderId] + 1 : 1
+                }))
+            }
+        })
+    }
 
     const value = {
 
