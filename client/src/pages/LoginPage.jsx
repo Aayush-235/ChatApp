@@ -70,20 +70,20 @@ const LoginPage = () => {
           {currState === "Sign up" ? "Create account" : "Login Now"}
         </button>
 
-        {/* {
+        {
         currState === "Sign up" && 
         <div className='flex items-center gap-2 text-sm text-gray-500'>
           <input type="checkbox" required />
           <p>Agree to the terms of use & privacy policy.</p>
         </div>
-        } */}
-
-        <div className='flex items-center gap-2 text-sm text-gray-500'>
+        }
+        
+        {/* <div className='flex items-center gap-2 text-sm text-gray-500'>
           <label htmlFor="checkbox">
             <input type="checkbox" id='checkbox' required />
           </label>
           <p>Agree to the terms of use & privacy policy.</p>
-        </div>
+        </div> */}
 
         <div className='flex flex-col gap-2'>
           {
