@@ -15,8 +15,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const filterUsers = input ? users.filter((user)=>{
-    // user.fullName.toLowerCase().includes(input.toLowerCase()) || user.email.toLowerCase().includes(input.toLowerCase())
-    user.fullName.toLowerCase().includes(input.toLowerCase())
+    return user.fullName.toLowerCase().includes(input.toLowerCase())
   }): users;
 
   useEffect(()=>{

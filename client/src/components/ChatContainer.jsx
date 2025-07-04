@@ -1,9 +1,46 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import assets, { messagesDummyData } from '../assets/assets'
 import { formatMessageTime } from '../library/utils';
+import { useContext } from 'react';
+import { ChatContext } from '../../context/ChatContext';
+import { AuthContext } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
-const ChatContainer = ({ selectedUser, setselectedUser }) => {
+const ChatContainer = () => {
   const scrollEnd = useRef();
+
+  const { messages, selectedUser, setSelectedUser, sendMessages, getMessages } = useContext(ChatContext);
+  const { authUser, onlineUsers } = useContext(AuthContext);
+
+  const [input, setInput] = useState('');
+
+  // Function to handle sending messages
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if(input.trim() === '') return null;
+    await sendMessages({text: input.trim()})
+    setInput('');
+  }
+
+  // Function to handle sending img
+  const handleSendImg = async (e) => {
+    const file = e.target.files[0];
+
+    if(!file || !file.type.startWith('image/')) {
+      toast.error('Please select a img file');
+      return ;
+    } 
+
+    const reader = new FileReader();
+
+    reader.onloadend = async ()=>{
+      await sendMessages({image : reader.result})
+      e.target.value = '' 
+    }
+    reader.readAsDataURL(file);
+
+      
+  }
 
   useEffect(() => {
     if (scrollEnd.current) {
@@ -25,7 +62,7 @@ const ChatContainer = ({ selectedUser, setselectedUser }) => {
             <span className='w-2 h-2 rounded-full bg-green-500'></span>
           </p>
 
-          <img onClick={() => setselectedUser(null)} src={assets.arrow_icon} className='max-w-7' alt="" />
+          <img onClick={() => setSelectedUser(null)} src={assets.arrow_icon} className='max-w-7' alt="" />
 
           <img src={assets.help_icon} className='max-w-5' alt="" />
 
@@ -66,16 +103,18 @@ const ChatContainer = ({ selectedUser, setselectedUser }) => {
 
           <div className='flex flex-1 items-center bg-gray-100/12 px-3 rounded-full'>
 
-            <input type="text" placeholder='Send a message...'
+            <input onChange={(e) => setInput(e.target.value)} value={input}
+              onKeyDown={(e) => e.key === 'Enter' ? handleSendMessage(e) : null}
+              type="text" placeholder='Send a message...'
               className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400" />
 
-            <input type="file" id="image" accept='image/png, image/jpeg , image/jpg' className="hidden" />
+            <input onChange={handleSendImg} type="file" id="image" accept='image/png, image/jpeg , image/jpg' className="hidden" />
             <label htmlFor="image">
               <img src={assets.gallery_icon} alt="" className='w-5 mr-2 cursor-pointer' />
             </label>
 
           </div>
-          <img src={assets.send_button} className='w-7 cursor-pointer' alt="" />
+          <img onClick={handleSendMessage} src={assets.send_button} className='w-7 cursor-pointer' alt="" />
 
         </div>
 
