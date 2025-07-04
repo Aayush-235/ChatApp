@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import toast from "react-hot-toast";
 
@@ -6,7 +6,7 @@ export const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
 
-    const [message, setMessage] = useState([]);
+    const [messages, setMessages] = useState([]);
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [unseenMessages, setUnseenMessages] = useState({});
@@ -39,7 +39,7 @@ export const ChatProvider = ({ children }) => {
             const { data } = await axios.get(`/api/message/${userId}`)
 
             if (data.success) {
-                setMessage(data.messages)
+                setMessages(data.messages)
             }
 
         } catch (error) {
@@ -56,7 +56,7 @@ export const ChatProvider = ({ children }) => {
             const { data } = await axios.post(`/api/message/send/${selectedUser._id}`, messageData);
 
             if (data.success) {
-                setMessage((preMessages) => [...preMessages, data.newMessage])
+                setMessages((preMessages) => [...preMessages, data.newMessage])
             }
             else {
                 toast.error(data.message);
@@ -75,7 +75,7 @@ export const ChatProvider = ({ children }) => {
         socket.on("newMessage", (newMessage) => {
             if (selectedUser && newMessage.senderId === selectedUser._id) {
                 newMessage.seen = true;
-                setMessage((preMessages) => [...preMessages, newMessage])
+                setMessages((preMessages) => [...preMessages, newMessage])
                 axios.put(`/api/message/mark/${newMessage._id}`)
             }
             else {
@@ -87,8 +87,32 @@ export const ChatProvider = ({ children }) => {
         })
     }
 
-    const value = {
 
+    // Function to unsubscribe from new message
+    // usefull when user change the selected user / component unmounts
+
+    const unsubscribeFromNewMessage = () => {
+        if (socket) {
+            socket.off("newMessage");
+        }
+    }
+
+    useEffect(()=>{
+        subscribeToNewMessage();
+        return ()=>{unsubscribeFromNewMessage();}
+    },[socket, selectedUser]) // when socket or selectedUser changes tyre aa fari thi run kare
+
+    const value = {
+        messages,
+        setMessages,
+        users,
+        selectedUser,
+        setSelectedUser,
+        getUser,
+        getMessages,
+        sendMessage,
+        unseenMessages,
+        setUnseenMessages,
     }
 
     return (
