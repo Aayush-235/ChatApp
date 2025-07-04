@@ -5,7 +5,7 @@ import User from "../models/User.js";
 import cloudinary from "../lib/cloudinary.js"
 import { io, userSocketMap } from "../server.js";
 
-export const getUsersForSidebar = async () => {
+export const getUsersForSidebar = async (req, res) => {
     try {
         const userId = req.user._id
 
