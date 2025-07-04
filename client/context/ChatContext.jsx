@@ -13,6 +13,8 @@ export const ChatProvider = ({ children }) => {
 
     const { socket, axios } = useContext(AuthContext)
 
+
+
     // Function to get all users in siderbar
 
     const getUser = async () => {
@@ -29,15 +31,36 @@ export const ChatProvider = ({ children }) => {
     }
 
 
+
+
     // Function to get all messages for selected user
-    const getMessages = async (userId) =>{
+    const getMessages = async (userId) => {
         try {
-            const {data} = await axios.get(`/api/message/${userId}`)
+            const { data } = await axios.get(`/api/message/${userId}`)
+
+            if (data.success) {
+                setMessage(data.messages)
+            }
+
+        } catch (error) {
+            toast.error(error.message);
+        }
+    }
+
+
+
+    // Function to send message for slected usr
+
+    const sendMessage = async (messageData) => {
+        try {
+            const { data } = await axios.post(`/api/message/send/${selectedUser._id}`, messageData);
 
             if(data.success){
-                setMessage(data.messages)    
+                setMessage((preMessages)=>[...preMessages, data.newMessage])
             }
-            
+            else{
+                toast.error(data.message);
+            }
         } catch (error) {
             toast.error(error.message);
         }
